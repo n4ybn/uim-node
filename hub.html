@@ -7,7 +7,7 @@
         <div class="table-responsive">
             <table id="hubs" class="table table-th-block table-dark dataTable">
                 <thead>
-                <tr><th style="width: 160px;">Address</th><th>IP</th><th>Name</th><th>Robot</th><th>Version</th></tr>
+                <tr><th style="width: 160px;">Address</th><th>IP</th><th>Name</th><th>Robot</th><th>Version</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
 
@@ -19,17 +19,24 @@
 
 <script>
 
+    $('span.restartHub').on('click', function(){
+        alert("Restarting hub");
+    });
+
     var hubtable = $('#hubs').DataTable();
     var hublist;
 
     function updateHubList(list){
         hublist = list;
         for (var i = 0; i < hublist.length; i++) {
-            hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0] ] );
+            hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0],
+                "<i class=\"fa fa-arrow-circle-up fa-3x\" style=\"color:green\" title=\"Online\"></i>",
+                "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\"restartHub\"></i></span>" ] );
 
         }
     }
 
     hub.updateHubs(updateHubList);
     hubtable.draw();
+
 </script>
