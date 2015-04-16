@@ -1,0 +1,28 @@
+<div class="row">
+    <h3>Alarms</h3>
+</div>
+<div class="row">
+
+    <div class="col-md-8 the-box full no-border">
+        <div class="table-responsive">
+            <table id="alarms" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 120px;">Origin</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+
+    var alarmtable = $('#alarms').DataTable();
+    alarm.updateAlarms();
+    var alarmlist = alarm.getAlarms();
+    console.log(alarmlist);
+    alarmtable.draw();
+
+</script>
