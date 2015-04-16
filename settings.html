@@ -1,0 +1,77 @@
+<div class="row">
+    <h3>Settings</h3>
+
+    <div class="panel with-nav-tabs panel-info">
+        <div class="panel-heading">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#wizard-1-step1"><i class="fa fa-code"></i> CA UIM</a></li>
+            </ul>
+        </div>
+        <div class="collapse in" id="panel-collapse-1">
+            <div class="tab-content">
+                <div id="wizard-1-step1" class="tab-pane fade active in">
+                    <div class="panel-body">
+                        <h4>CA UIM Settings</h4>
+                        <form role="form">
+                            <div class="form-group">
+                                <label>Primary Hub UIM Address</label>
+                                <input id="primaryhubaddress" type="text" placeholder="Enter Primary Hub Address" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Hub IP</label>
+                                <input id="primaryhubip" type="text" placeholder="Enter Primary Hub IP" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>REST URL</label>
+                                <input id="resturl" type="text" placeholder="Enter REST URL" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>REST API Username</label>
+                                <input id="restusername" type="password" placeholder="Enter Username" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>REST API Password</label>
+                                <input id="restpassword" type="password" placeholder="Enter Password" class="form-control">
+                            </div>
+                        </form>
+                    </div><!-- /.panel-body -->
+                    <div class="panel-footer text-right">
+                        <a class="btn btn-success NextStep">Save <i class="fa fa-save"></i></a>
+                    </div>
+                </div>
+
+            </div><!-- /.tab-content -->
+        </div><!-- /.collapse in -->
+    </div>
+
+
+    <script>
+        $("#primaryhubaddress").val(localStorage.getItem("primaryhubaddress"));
+        $("#primaryhubip").val(localStorage.getItem("primaryhubip"));
+        $("#restusername").val(localStorage.getItem("restusername"));
+        $("#restpassword").val(localStorage.getItem("restpassword"));
+        $("#resturl").val(localStorage.getItem("resturl"));
+
+        $(document.body).on('change','#primaryhubaddress',function(){
+            localStorage.setItem("primaryhubaddress", $.trim($("#primaryhubaddress").val()));
+        });
+
+        $(document.body).on('change','#primaryhubip',function(){
+            localStorage.setItem("primaryhubip", $.trim($("#primaryhubip").val()));
+        });
+
+        $(document.body).on('change','#restusername',function(){
+            localStorage.setItem("restusername", $.trim($("#restusername").val()));
+        });
+
+        $(document.body).on('change','#restpassword',function(){
+            localStorage.setItem("restpassword", $.trim($("#restpassword").val()));
+        });
+
+        $(document.body).on('change','#resturl',function(){
+            localStorage.setItem("resturl", $.trim($("#resturl").val()));
+        });
+
+    </script>
+
+</div>

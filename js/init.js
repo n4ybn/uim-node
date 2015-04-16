@@ -10,11 +10,8 @@ var later = require("later");
 var https = require("https");
 var request = require("request");
 var querystring = require('querystring');
-var crypto = require('crypto');
-var cryptsy = new Cryptsy();
-var poloniex = new Poloniex();
-var bittrex = new Bittrex();
-
+var Client = require('node-rest-client').Client;
+var connection = new Connection();
 
 if (typeof localStorage === "undefined" || localStorage === null) {
     var LocalStorage = require('node-localstorage').LocalStorage;
@@ -22,10 +19,18 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 }
 
 var lastPage = localStorage.getItem("lastpage");
-cryptsy.setApiKeys(localStorage.getItem("cryptsyapikey"),localStorage.getItem("cryptsyapisecret"));
-bittrex.setApiKeys(localStorage.getItem("bittrexapikey"),localStorage.getItem("bittrexapisecret"));
-poloniex.setApiKeys(localStorage.getItem("poloniexapikey"),localStorage.getItem("poloniexapisecret"));
+connection.setVariables(localStorage.getItem("resturl"),localStorage.getItem("primaryhubaddress"),localStorage.getItem("primaryhubip"),localStorage.getItem("restusername"),
+    localStorage.getItem("restpassword"));
 
-cryptsy.updateMarkets();
-//poloniex.updateMarkets();
-bittrex.updateMarkets();
+var options = {
+
+    mimetypes: {
+        json: ["application/json", "application/json;charset=utf-8"]
+    },
+
+    headers:{"Content-Type": "application/json"},
+    user:localStorage.getItem("restusername"),
+    password:localStorage.getItem("restpassword")
+};
+
+var client = new Client(options);

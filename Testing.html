@@ -1,0 +1,35 @@
+<div class="row">
+    <h3>Testing</h3>
+</div>
+<div class="row">
+
+    <div class="col-xs-6 the-box full no-border">
+        <div class="table-responsive">
+            <table id="alarms" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 30px;">Customer</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+    var alarmtable = $('#alarms').DataTable();
+
+    client.get(localStorage.getItem("resturl")+"alarms", function(data, response) {
+        var d = data['alarm-list']['alarm'];
+        for (var i = 0; i < d.length; i++) {
+            alarmtable.row.add( [ d[i].origin[0], d[i].robot[0], d[i].probe[0], d[i].severity[0], d[i].message[0] ] );
+        }
+    }).on('error',function(err){
+        console.log('something went wrong on the request', err.request.options);
+    });
+
+    alarmtable.draw();
+
+
+</script>
