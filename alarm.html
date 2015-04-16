@@ -20,9 +20,12 @@
 <script>
 
     var alarmtable = $('#alarms').DataTable();
-    alarm.updateAlarms();
-    var alarmlist = alarm.getAlarms();
-    console.log(alarmlist);
+    var alarmlist;
+    alarm.updateAlarms(updateAlarmList);
     alarmtable.draw();
 
+    function updateAlarmList(list){
+        alarmlist = list;
+        console.log(alarmlist);
+    }
 </script>

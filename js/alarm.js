@@ -8,11 +8,11 @@ function Alarm() {
     this.path = 'alarms/';
 }
 
-Alarm.prototype.updateAlarms = function() {
+Alarm.prototype.updateAlarms = function(callback) {
     client.get(connection.url+this.path, function(data, response) {
         var d = data['alarm-list']['alarm'];
         alarmlist = d;
-        return alarmlist;
+        callback(alarmlist);
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
