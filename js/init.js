@@ -19,18 +19,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 }
 
 var lastPage = localStorage.getItem("lastpage");
-connection.setVariables(localStorage.getItem("resturl"),localStorage.getItem("primaryhubaddress"),localStorage.getItem("primaryhubip"),localStorage.getItem("restusername"),
-    localStorage.getItem("restpassword"));
 
-var options = {
-
-    mimetypes: {
-        json: ["application/json", "application/json;charset=utf-8"]
-    },
-
-    headers:{"Content-Type": "application/json"},
-    user:localStorage.getItem("restusername"),
-    password:localStorage.getItem("restpassword")
-};
+var options = connection.getOptions();
 
 var client = new Client(options);
