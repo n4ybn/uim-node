@@ -21,11 +21,15 @@
 
     var alarmtable = $('#alarms').DataTable();
     var alarmlist;
-    alarm.updateAlarms(updateAlarmList);
-    alarmtable.draw();
 
     function updateAlarmList(list){
         alarmlist = list;
-        console.log(alarmlist);
+
+        for (var i = 0; i < alarmlist.length; i++) {
+            alarmtable.row.add( [ alarmlist[i].origin[0], alarmlist[i].robot[0], alarmlist[i].probe[0], alarmlist[i].severity[0], alarmlist[i].message[0] ] );
+        }
     }
+
+    alarm.updateAlarms(updateAlarmList);
+    alarmtable.draw();
 </script>
