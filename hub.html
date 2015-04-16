@@ -1,0 +1,35 @@
+<div class="row">
+    <h3>Hubs</h3>
+</div>
+<div class="row">
+
+    <div class="col-md-8 the-box full no-border">
+        <div class="table-responsive">
+            <table id="hubs" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 160px;">Address</th><th>IP</th><th>Name</th><th>Robot</th><th>Version</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+
+    var hubtable = $('#hubs').DataTable();
+    var hublist;
+
+    function updateHubList(list){
+        hublist = list;
+        for (var i = 0; i < hublist.length; i++) {
+            hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0] ] );
+
+        }
+    }
+
+    hub.updateHubs(updateHubList);
+    hubtable.draw();
+</script>

@@ -6,6 +6,7 @@ var http = require("http");
 var Client = require('node-rest-client').Client;
 var connection = new Connection();
 var alarm = new Alarm();
+var hub = new Hub();
 
 if (typeof localStorage === "undefined" || localStorage === null) {
     var LocalStorage = require('node-localstorage').LocalStorage;
