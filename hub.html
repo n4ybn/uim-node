@@ -19,9 +19,25 @@
 
 <script>
 
-    $('span.restartHub').on('click', function(){
-        alert("Restarting hub");
+    var hubClick; // global var - saves the last clicked hub
+
+    // attach event listener to the tbody part of the table,
+    // now we listen for general clicks on the table
+    // and filter those which are clicked on an <i> element
+    $('#hubs tbody').bind('click', function(e){
+        var target = e.target,
+                $target = $(target);
+        hubClick = $target;
+        // filter for an <i> element ( nodeName === "I" )
+        // filter also that only an element which has a parent with the class 'restartHub' gets triggerd
+        if(target.nodeName === "I" && $target.parent().attr("class") == "restartHub") {
+            hubClicked($target.attr("id"));
+        }
     });
+
+    function hubClicked(hubId) {
+        alert("Hub with id "+ hubId +" clicked!");
+    }
 
     var hubtable = $('#hubs').DataTable();
     var hublist;
@@ -31,12 +47,14 @@
         for (var i = 0; i < hublist.length; i++) {
             hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0],
                 "<i class=\"fa fa-arrow-circle-up fa-3x\" style=\"color:green\" title=\"Online\"></i>",
-                "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\"restartHub\"></i></span>" ] );
-
+                "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] );
         }
+        // that call ensures to redraw the table, so updates are visible immediately after change.
+        // it needs to be called everytime after adding/removing a row!
+        hubtable.draw();
     }
 
     hub.updateHubs(updateHubList);
-    hubtable.draw();
+
 
 </script>
