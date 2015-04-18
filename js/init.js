@@ -19,5 +19,5 @@ var lastPage = localStorage.getItem("lastpage");
 var jsonOptions = connection.getJsonOptions();
 var jsonClient = new Client(jsonOptions);
 
-
 hub.updateHubs();
+hub.updateSubscribers();

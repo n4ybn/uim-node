@@ -21,23 +21,26 @@ Hub.prototype.updateHubs = function() {
     });
 };
 
-
 Hub.prototype.getHubs = function(callback) {
         hublist = JSON.parse(localStorage.getItem("hublist"));
         callback(hublist);
 };
 
-
-Hub.prototype.listSubscribers = function(callback) {
+Hub.prototype.updateSubscribers = function() {
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
 
     jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback2/list_subscribers", args, function(data, response) {
         var d = data.nimPdsTable;
-        subscriberlist = d;
-        callback(subscriberlist);
+        subscriberlist = d[1].nimPds;
+        localStorage.setItem("subscriberlist", JSON.stringify(subscriberlist));
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
+};
+
+Hub.prototype.getSubscribers = function(callback) {
+    subscriberlist = JSON.parse(localStorage.getItem("subscriberlist"));
+    callback(subscriberlist);
 };
 
 Hub.prototype.updateThroughput = function() {
