@@ -13,9 +13,11 @@ if (typeof localStorage === "undefined" || localStorage === null) {
     var localStorage = new LocalStorage('./scratch');
 }
 
+
 var lastPage = localStorage.getItem("lastpage");
 
-var options = connection.getOptions();
+var jsonOptions = connection.getJsonOptions();
+var jsonClient = new Client(jsonOptions);
 
-var client = new Client(options);
 
+hub.updateHubs();

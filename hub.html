@@ -3,11 +3,26 @@
 </div>
 <div class="row">
 
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Modal header</h3>
+        </div>
+        <div class="modal-body">
+            <p>One fine body…</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary">Save changes</button>
+        </div>
+    </div>
+
     <div class="col-md-8 the-box full no-border">
         <div class="table-responsive">
             <table id="hubs" class="table table-th-block table-dark dataTable">
                 <thead>
-                <tr><th style="width: 160px;">Address</th><th>IP</th><th>Name</th><th>Robot</th><th>Version</th><th>Status</th><th>Actions</th></tr>
+                <tr><th style="width: 120px;">Address</th><th>IP</th><th>Name</th><th>Robot</th><th>Version</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
 
@@ -29,17 +44,22 @@
                 $target = $(target);
         hubClick = $target;
         // filter for an <i> element ( nodeName === "I" )
-        // filter also that only an element which has a parent with the class 'restartHub' gets triggerd
-        if(target.nodeName === "I" && $target.parent().attr("class") == "restartHub") {
+        // filter also that only an element which has a parent with the class 'restartHub' gets triggered
+        if(target.nodeName === "A" && $target.parent().attr("class") == "restartHub") {
             hubClicked($target.attr("id"));
         }
     });
 
     function hubClicked(hubId) {
-        alert("Hub with id "+ hubId +" clicked!");
+        //
+        alert("Open Modal Here");
     }
 
-    var hubtable = $('#hubs').DataTable();
+    var hubtable = $('#hubs').DataTable({
+        "pageLength": 100,
+        "autowidth": true
+    });
+
     var hublist;
 
     function updateHubList(list){
@@ -47,14 +67,25 @@
         for (var i = 0; i < hublist.length; i++) {
             hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0],
                 "<i class=\"fa fa-arrow-circle-up fa-3x\" style=\"color:green\" title=\"Online\"></i>",
-                "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] );
+              /*  "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] ); */
+                "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
+                "Hub Actions" +
+                "<span class=\"caret\"></span>" +
+                "</button>" +
+                "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
+                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\" id=\""+i+"\">Restart</a></li>" +
+                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Get Hubs</a></li>" +
+                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Get Robots</a></li>" +
+                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">List Subscribers</a></li>" +
+                "</ul>" +
+                "</div>" ] );
         }
         // that call ensures to redraw the table, so updates are visible immediately after change.
-        // it needs to be called everytime after adding/removing a row!
+        // it needs to be called every time after adding/removing a row!
         hubtable.draw();
     }
 
-    hub.updateHubs(updateHubList);
+    hub.getHubs(updateHubList);
 
 
 </script>

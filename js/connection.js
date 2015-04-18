@@ -12,14 +12,28 @@ function Connection() {
 }
 
 
-Connection.prototype.getOptions = function() {
+Connection.prototype.getJsonOptions = function() {
 
     options = {
         mimetypes: {
             json: ["application/json", "application/json;charset=utf-8"]
         },
+        headers:{"Content-Type": "application/json", "Accept": "application/json"},
+        user:this.username,
+        password:this.password
+    };
 
-        headers:{"Content-Type": "application/json"},
+    return options;
+}
+
+Connection.prototype.getXmlOptions = function() {
+
+    options = {
+        mimetypes: {
+            xml:["application/xml","application/xml;charset=utf-8"]
+        },
+
+        headers:{"Content-Type": "application/xml"},
         user:this.username,
         password:this.password
     };

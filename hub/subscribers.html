@@ -1,0 +1,49 @@
+
+
+<div class="row">
+    <h3>Subscribers</h3>
+</div>
+<div class="row">
+    <div class="col-md-8 the-box full no-border">
+        <div class="table-responsive">
+            <table id="subscribers" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 120px;">Hub</th><th>Queue</th><th>Subject</th><th>Type</th><th>Connected</th><th>From</th><th>Bulk Size</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+
+    // Subscriber List
+    var subscriberstable = $('#subscribers').DataTable({
+        "pageLength": 100,
+        "autowidth": true
+    });
+
+    var subscriberlist;
+
+    function updateSubscribersList(list) {
+        subscriberlist = list[1].nimPds;
+
+        for (var i = 0; i < subscriberlist.length; i++) {
+            console.log(subscriberlist[i].nimString);
+        }
+        /*
+         if (subscriberlist[1].nimPds[i].nimString.length == 5) {
+         subscriberstable.row.add( [ subscriberlist[i].nimString[1], subscriberlist[i].nimString[4], subscriberlist[i].name[0], subscriberlist[i].nimString[2], subscriberlist[i].nimString[5], "FILLER", subscriberlist[i].nimInt[0] ] );
+         }
+         }
+         */
+        subscriberstable.draw();
+    }
+
+    //hub.listSubscribers(updateSubscribersList);
+    //hub.updateTunnels();
+
+</script>

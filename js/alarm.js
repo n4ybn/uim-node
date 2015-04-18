@@ -9,7 +9,7 @@ function Alarm() {
 }
 
 Alarm.prototype.updateAlarms = function(callback) {
-    client.get(connection.url+this.path, function(data, response) {
+    jsonClient.get(connection.url+this.path, function(data, response) {
         var d = data['alarm-list']['alarm'];
         alarmlist = d;
         callback(alarmlist);

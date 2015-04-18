@@ -3,11 +3,11 @@
 </div>
 <div class="row">
 
-    <div class="col-md-8 the-box full no-border">
+    <div class="col-sm-6 the-box full no-border">
         <div class="table-responsive">
             <table id="alarms" class="table table-th-block table-dark dataTable">
                 <thead>
-                <tr><th style="width: 120px;">Origin</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th></tr>
+                <tr><th>Nimid</th><th>Origin</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
 
@@ -19,17 +19,53 @@
 
 <script>
 
-    var alarmtable = $('#alarms').DataTable();
+    var alarmClick; // global var - saves the last clicked hub
+
+    // attach event listener to the tbody part of the table,
+    // now we listen for general clicks on the table
+    // and filter those which are clicked on an <i> element
+    $('#alarms tbody').bind('click', function(e){
+        var target = e.target,
+                $target = $(target);
+        alarmClick = $target;
+        // filter for an <i> element ( nodeName === "I" )
+        // filter also that only an element which has a parent with the class 'restartHub' gets triggered
+        if(target.nodeName === "I" && $target.parent().attr("class") == "acceptAlarm") {
+            alarmClicked($target.attr("id"));
+        }
+    });
+
+    function alarmClicked(alarmId) {
+        alert("I clicked "+alarmId);
+    }
+
+    var alarmtable = $('#alarms').DataTable( {
+        "pageLength": 100,
+        "autowidth": true
+    });
     var alarmlist;
 
     function updateAlarmList(list){
         alarmlist = list;
 
         for (var i = 0; i < alarmlist.length; i++) {
-            alarmtable.row.add( [ alarmlist[i].origin[0], alarmlist[i].robot[0], alarmlist[i].probe[0], alarmlist[i].severity[0], alarmlist[i].message[0] ] );
+            alarmtable.row.add( [ alarmlist[i].id[0], alarmlist[i].origin[0], alarmlist[i].robot[0], alarmlist[i].probe[0], alarmlist[i].severity[0], alarmlist[i].message[0],
+                /* "<span class=\"acceptAlarm\"><i class=\"fa fa-caret-square-o-down fa-2x\" title=\"Accept Alarm\" id=\""+i+"\"></i></span>" ] ); */
+            "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
+            "Alarm Actions" +
+            "<span class=\"caret\"></span>" +
+            "</button>" +
+            "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
+            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Accept</a></li>" +
+            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Acknowledge</a></li>" +
+            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Assign</a></li>" +
+            "</ul>" +
+            "</div>" ] );
         }
+        // that call ensures to redraw the table, so updates are visible immediately after change.
+        // it needs to be called every time after adding/removing a row!
+        hubtable.draw();
     }
 
     alarm.updateAlarms(updateAlarmList);
-    alarmtable.draw();
 </script>
