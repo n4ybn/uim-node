@@ -1,0 +1,40 @@
+
+
+<div class="row">
+    <h3>Topology</h3>
+</div>
+<div class="row">
+    <div class="col-md-8 the-box full no-border">
+        <div class="table-responsive">
+            <table id="topology" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 120px;">Name</th><th>Address</th><th>Robot</th><th>IP</th><th>Type</th><th>Source</th><th>Status</th><th>Proximity</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+
+    var topologytable = $('#topology').DataTable({
+        "pageLength": 100,
+        "autowidth": true
+    });
+
+    function updateTopologyList(list) {
+        hublist = list;
+        for (var i = 0; i < hublist.length; i++) {
+            var h = hub.getTopology(hublist[i].name);
+            topologytable.row.add( [ hublist[i].name, h.address, h.robot, h.ip, h.hubtype, h.source, h.status, h.hubproximity ] );
+        }
+        topologytable.draw();
+    }
+
+    hub.getHubs(updateTopologyList);
+    hub.updateMapData();
+
+</script>

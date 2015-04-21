@@ -30,13 +30,25 @@
         alarmClick = $target;
         // filter for an <i> element ( nodeName === "I" )
         // filter also that only an element which has a parent with the class 'restartHub' gets triggered
-        if(target.nodeName === "I" && $target.parent().attr("class") == "acceptAlarm") {
-            alarmClicked($target.attr("id"));
+        if(target.nodeName === "A" && $target.attr("class") == "alarm") {
+            alarmClicked($target.attr("id"), $target.attr("title"));
         }
     });
 
-    function alarmClicked(alarmId) {
-        alert("I clicked "+alarmId);
+    function alarmClicked(alarmId, title) {
+        switch (title) {
+            case "accept":
+                alert("Accepting Alarm with id:"+alarmId);
+                break;
+            case "ack":
+                alert("Acknowledging Alarm with id:"+alarmId);
+                break;
+            case "assign":
+                alert("Assigning Alarm with id:"+alarmId);
+                break;
+        }
+
+
     }
 
     var alarmtable = $('#alarms').DataTable( {
@@ -56,9 +68,9 @@
             "<span class=\"caret\"></span>" +
             "</button>" +
             "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
-            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Accept</a></li>" +
-            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Acknowledge</a></li>" +
-            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Assign</a></li>" +
+            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"accept\" href=\"#\">Accept</a></li>" +
+            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"ack\" href=\"#\">Acknowledge</a></li>" +
+            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"assign\" href=\"#\">Assign</a></li>" +
             "</ul>" +
             "</div>" ] );
         }

@@ -48,3 +48,5 @@ Temporary Items
 .idea/uim-node.iml
 .idea
 idea
+node_modules
+*.db

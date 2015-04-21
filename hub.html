@@ -1,16 +1,17 @@
 <div class="row">
     <h3>Hubs</h3>
 </div>
+
 <div class="row">
 
     <!-- Modal -->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">?</button>
             <h3 id="myModalLabel">Modal header</h3>
         </div>
         <div class="modal-body">
-            <p>One fine body…</p>
+            <p>One fine body?</p>
         </div>
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -45,14 +46,19 @@
         hubClick = $target;
         // filter for an <i> element ( nodeName === "I" )
         // filter also that only an element which has a parent with the class 'restartHub' gets triggered
-        if(target.nodeName === "A" && $target.parent().attr("class") == "restartHub") {
+        if(target.nodeName === "A" && $target.attr("class") == "hub") {
             hubClicked($target.attr("id"));
         }
     });
 
     function hubClicked(hubId) {
-        //
-        alert("Open Modal Here");
+        if (hubId === "topology") {
+            for (var i = 0; i < hublist.length; i++) {
+                console.log(hub.getTopology(hublist[i].name));
+            }
+        } else {
+            alert("Clicked something");
+        }
     }
 
     var hubtable = $('#hubs').DataTable({
@@ -67,16 +73,17 @@
         for (var i = 0; i < hublist.length; i++) {
             hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0],
                 "<i class=\"fa fa-arrow-circle-up fa-3x\" style=\"color:green\" title=\"Online\"></i>",
-              /*  "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] ); */
+                /*  "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] ); */
                 "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
                 "Hub Actions" +
                 "<span class=\"caret\"></span>" +
                 "</button>" +
                 "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
-                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\" id=\""+i+"\">Restart</a></li>" +
-                "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Get Hubs</a></li>" +
+                "<li role=\"presentation\"><a class=\"hub\" role=\"menuitem\" tabindex=\"-1\" href=\"#\" id=\""+i+"\">Restart</a></li>" +
+                "<li role=\"presentation\"><a class=\"hub\" role=\"menuitem\" tabindex=\"-1\" href=\"#\" id=\"topology\">Get Hubs</a></li>" +
                 "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">Get Robots</a></li>" +
                 "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"#\">List Subscribers</a></li>" +
+                "<li role=\"presentation\"><a data-toggle=\"modal\" id=\"addModal\" href=\"#myModal\" class=\"btn-default\">Test Modal</a></li>" +
                 "</ul>" +
                 "</div>" ] );
         }
