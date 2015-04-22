@@ -69,9 +69,9 @@
     var hublist;
 
     function updateHubList(list){
-        hublist = list;
+        hublist = list.hubs;
         for (var i = 0; i < hublist.length; i++) {
-            hubtable.row.add( [ hublist[i].address[0], hublist[i].ip[0], hublist[i].name[0], hublist[i].robotName[0], hublist[i].version[0],
+            hubtable.row.add( [ hublist[i].address, hublist[i].ip, hublist[i].hubname, hublist[i].robot, hublist[i].version,
                 "<i class=\"fa fa-arrow-circle-up fa-3x\" style=\"color:green\" title=\"Online\"></i>",
                 /*  "<span class=\"restartHub\"><i class=\"fa fa-refresh fa-2x\" title=\"Restart Hub\" id=\""+i+"\"></i></span>" ] ); */
                 "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
@@ -93,6 +93,5 @@
     }
 
     hub.getHubs(updateHubList);
-
 
 </script>

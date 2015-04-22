@@ -29,52 +29,12 @@
     var subscriberlist;
 
     function updateSubscribersList(list) {
-        subscriberlist = list;
-        var name ="", id ="", type ="", connected ="", subject ="", bulksize ="", from ="", address ="", remote_queue ="";
+        subscriberlist = list.subscribers;
         for (var i = 0; i < subscriberlist.length; i++) {
-            //loop through the nimInt table
-            for (var j = 0; j < subscriberlist[i].nimInt.length; j++) {
-                var key = subscriberlist[i].nimInt[j]['@key'];
-                var value = subscriberlist[i].nimInt[j]['$']
-                if (key === "bulk_size") {
-                    bulksize = value;
-                }
+            subscriberstable.row.add( [ subscriberlist[i].address,subscriberlist[i].name,subscriberlist[i].subject,subscriberlist[i].type,subscriberlist[i].connected,subscriberlist[i].from,subscriberlist[i].bulksize ] );
+        }
 
-            };
 
-            //loop through the nimString table
-            for (var k = 0; k < subscriberlist[i].nimString.length; k++) {
-                key = subscriberlist[i].nimString[k]['@key'];
-                value = subscriberlist[i].nimString[k]['$']
-                switch(key) {
-                    case "name":
-                        name = value;
-                        break;
-                    case "connected":
-                        connected = value;
-                        break;
-                    case "id":
-                        id = value;
-                        break;
-                    case "type":
-                        type = value;
-                        break;
-                    case "subject":
-                        subject = value;
-                        break;
-                    case "from":
-                        from = value;
-                        break;
-                    case "address":
-                        address = value;
-                        break;
-                    case "remote_queue":
-                        remote_queue = value;
-                        break;
-                };
-            };
-            subscriberstable.row.add( [ localStorage.getItem("primaryhubaddress"),name,subject,type,connected,from,bulksize ] );
-        };
         subscriberstable.draw();
     }
 
