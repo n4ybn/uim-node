@@ -162,18 +162,38 @@ Hub.prototype.getSubscribers = function(callback) {
     callback(subscriberlist);
 };
 
-//Code not updated
-
 Hub.prototype.updateThroughput = function() {
     var date = new Date();
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: { "nimInt": [ {"@key":"day","$":date.getDay()} ] } };
     jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback2/get_perf_data", args, function(data, response) {
-        console.log(data);
+        var d = data.nimPdsTable;
+        var perflist = d.nimPds;
+        var requests= 0,received= 0,sent=0;
+        for (var i = 0; i < perflist.length; i++) {
+            for (var j = 0; j < perflist[i].nimInt.length; j++) {
+                var key = perflist[i].nimInt[j]['@key'];
+                var value = perflist[i].nimInt[j]['$']
+                switch (key) {
+                    case "requests":
+                        requests = parseInt(requests) + parseInt(value);
+                        break;
+                    case "post_received":
+                        received = parseInt(received) + parseInt(value);
+                        break;
+                    case "post_sent":
+                        sent = parseInt(sent) + parseInt(value);
+                        break;
+                }
+            };
+        }
+        console.log(requests/i/60+" "+sent/i/60+" "+received/i/60);
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
 
 };
+
+//Code not updated
 
 Hub.prototype.updateTunnels = function() {
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
@@ -196,18 +216,11 @@ Hub.prototype.updateParentHub = function() {
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
     for (var i = 0; i < hublist.length; i++) {
         var address = hublist[i].address;
-
-        // outer scope check, before async
-        console.log("CURRENT: "+address);
         var url = connection.url+"probe"+address+"/hub/callback2/gethubs";
         jsonClient.post(url, args, function(data, response) {
             var d = data.nimPdsTable;
             gethubs = d.nimPds;
             var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "";
-
-            // inner scope check, within async
-            console.log(this.address);
-
             for (var l = 0; l < gethubs.length; l++) {
                 //loop through the nimInt table
                 for (var j = 0; j < gethubs[l].nimInt.length; j++) {

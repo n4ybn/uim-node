@@ -30,4 +30,4 @@ var jsonClient = new Client(jsonOptions);
 hub.getHubList();
 hub.updateSubscribers();
 hub.updateParentHub();
-//hub.updateThroughput();
+hub.updateThroughput();
