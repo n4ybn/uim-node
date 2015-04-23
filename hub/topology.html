@@ -19,22 +19,17 @@
 </div>
 
 <script>
-
     var topologytable = $('#topology').DataTable({
         "pageLength": 100,
         "autowidth": true
     });
 
     function updateTopologyList(list) {
-        hublist = list;
+        hublist = list.hubs;
         for (var i = 0; i < hublist.length; i++) {
-            var h = hub.getTopology(hublist[i].name);
-            topologytable.row.add( [ hublist[i].name, h.address, h.robot, h.ip, h.hubtype, h.source, h.status, h.hubproximity ] );
+            topologytable.row.add( [ hublist[i].hubname, hublist[i].address, hublist[i].robot, hublist[i].ip, hublist[i].hubtype, hublist[i].source, hublist[i].status, hublist[i].hubproximity ] );
         }
         topologytable.draw();
     }
-
     hub.getHubs(updateTopologyList);
-    hub.updateMapData();
-
 </script>

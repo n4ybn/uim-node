@@ -5,6 +5,7 @@
 var hublist;
 var subscriberlist;
 var parentlist;
+var throughputlist;
 
 function Hub() {
     this.path = 'hubs/';
@@ -163,47 +164,70 @@ Hub.prototype.getSubscribers = function(callback) {
 };
 
 Hub.prototype.updateThroughput = function() {
+    // define the object for storage
+    var throughput = {
+        'throughput': [],
+        state: true
+    };
+
+    // get the list of hubs from storage
+    var h = JSON.parse(localStorage.getItem("hubs"));
+    hublist = h.hubs;
     var date = new Date();
+    // send the current day of the month in the POST
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: { "nimInt": [ {"@key":"day","$":date.getDay()} ] } };
-    jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback2/get_perf_data", args, function(data, response) {
-        var d = data.nimPdsTable;
-        var perflist = d.nimPds;
-        var requests= 0,received= 0,sent=0;
-        for (var i = 0; i < perflist.length; i++) {
-            for (var j = 0; j < perflist[i].nimInt.length; j++) {
-                var key = perflist[i].nimInt[j]['@key'];
-                var value = perflist[i].nimInt[j]['$']
-                switch (key) {
-                    case "requests":
-                        requests = parseInt(requests) + parseInt(value);
-                        break;
-                    case "post_received":
-                        received = parseInt(received) + parseInt(value);
-                        break;
-                    case "post_sent":
-                        sent = parseInt(sent) + parseInt(value);
-                        break;
-                }
-            };
-        }
-        console.log(requests/i/60+" "+sent/i/60+" "+received/i/60);
-    }).on('error',function(err){
-        console.log('something went wrong on the request', err.request.options);
-    });
+    for (var i = 0; i < hublist.length; i++) {
+        var address = hublist[i].address;
+        var requests = 0, received = 0, sent = 0;
+        var url = connection.url + "probe" + connection.address + "/hub/callback2/get_perf_data";
+        jsonClient.post(url, args, function (data, response) {
+            var d = data.nimPdsTable;
+            var perflist = d.nimPds;
+            for (var i = 0; i < perflist.length; i++) {
+                for (var j = 0; j < perflist[i].nimInt.length; j++) {
+                    var key = perflist[i].nimInt[j]['@key'];
+                    var value = perflist[i].nimInt[j]['$']
+                    switch (key) {
+                        case "requests":
+                            requests = parseInt(requests) + parseInt(value);
+                            break;
+                        case "post_received":
+                            received = parseInt(received) + parseInt(value);
+                            break;
+                        case "post_sent":
+                            sent = parseInt(sent) + parseInt(value);
+                            break;
+                    }
+                };
+            }
+            throughput.throughput.push( { address: this.address, requests: requests/ i / 60, sent: sent/ i / 60, received: received/ i / 60 } );
+            localStorage.setItem("throughput", JSON.stringify(throughput));
+        }.bind( {address: address} )).on('error', function (err) {
+            console.log('something went wrong on the request', err.request.options);
+        });
+
+    }
+};
+
+Hub.prototype.getThroughput = function(callback) {
+    throughputlist = JSON.parse(localStorage.getItem("throughput"));
+    callback(throughputlist);
 
 };
 
-//Code not updated
-
-Hub.prototype.updateTunnels = function() {
+//TO DO
+/*
+ Hub.prototype.updateTunnels = function() {
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
     jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback/tunnel_get_info", args, function(data, response) {
         console.log(data);
     }).on('error',function(err){
-        console.log('something went wrong on the request', err.request.options);
-    });
+    console.log('something went wrong on the request', err.request.options);
+ });
 
-}
+ }
+
+ */
 
 Hub.prototype.updateParentHub = function() {
     var parents = {
@@ -213,7 +237,9 @@ Hub.prototype.updateParentHub = function() {
 
     var h = JSON.parse(localStorage.getItem("hubs"));
     hublist = h.hubs;
+
     args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
+
     for (var i = 0; i < hublist.length; i++) {
         var address = hublist[i].address;
         var url = connection.url+"probe"+address+"/hub/callback2/gethubs";
@@ -270,8 +296,9 @@ Hub.prototype.updateParentHub = function() {
                             break;
                     }
                 }
-                console.log("Polled hub: "+this.address+" Callback address: "+addr+" Type: "+type+" Proximity: "+proximity);
+                parents.parents.push( { hub: this.address, address: addr, type: type, proximity: proximity } );
             }
+            localStorage.setItem('parents', JSON.stringify(parents));
         // .bind( {outerscopevar: asyncvar} ) will bind the outer scope variable to the async callback. you can access it then with this.asyncvar
         }.bind( {address: address} )).on('error',function(err){
             console.log('something went wrong on the request', err.request.options);
@@ -281,7 +308,6 @@ Hub.prototype.updateParentHub = function() {
 
 Hub.prototype.getParents = function() {
     parentlist = JSON.parse(localStorage.getItem("parents"));
-    console.log(parentlist);
 };
 
 

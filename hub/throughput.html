@@ -1,0 +1,42 @@
+
+
+<div class="row">
+    <h3>Throughput Per Minute - Current Day</h3>
+</div>
+<div class="row">
+    <div class="col-md-8 the-box full no-border">
+        <div class="table-responsive">
+            <table id="throughput" class="table table-th-block table-dark dataTable">
+                <thead>
+                <tr><th style="width: 120px;">Address</th><th>Requests</th><th>Sent</th><th>Received</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div><!-- /.table-responsive -->
+    </div>
+</div>
+
+<script>
+
+    var throughputlist;
+
+    var throughputtable = $('#throughput').DataTable({
+        "pageLength": 10,
+        "autowidth": true
+    });
+
+    function updateThroughputList(list) {
+        throughputlist = list.throughput
+        for (var i = 0; i < throughputlist.length; i++) {
+            throughputtable.row.add( [throughputlist[i].address, throughputlist[i].requests, throughputlist[i].sent, throughputlist[i].received ] );
+        }
+        throughputtable.draw();
+    }
+
+    hub.getThroughput(updateThroughputList);
+
+    //hub.getParents();
+
+</script>
