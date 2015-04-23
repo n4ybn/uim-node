@@ -6,6 +6,7 @@ var hublist;
 var subscriberlist;
 var parentlist;
 var throughputlist;
+var maplist;
 
 function Hub() {
     this.path = 'hubs/';
@@ -246,7 +247,7 @@ Hub.prototype.updateParentHub = function() {
         jsonClient.post(url, args, function(data, response) {
             var d = data.nimPdsTable;
             gethubs = d.nimPds;
-            var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "";
+            var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "", primary =  false;
             for (var l = 0; l < gethubs.length; l++) {
                 //loop through the nimInt table
                 for (var j = 0; j < gethubs[l].nimInt.length; j++) {
@@ -296,7 +297,10 @@ Hub.prototype.updateParentHub = function() {
                             break;
                     }
                 }
-                parents.parents.push( { hub: this.address, address: addr, type: type, proximity: proximity } );
+                if (this.address === localStorage.getItem("primaryhubaddress")) {
+                    primary = true;
+                }
+                parents.parents.push( { hub: this.address, address: addr, type: type, proximity: proximity, source: src, ip: hip, primary: primary } );
             }
             localStorage.setItem('parents', JSON.stringify(parents));
         // .bind( {outerscopevar: asyncvar} ) will bind the outer scope variable to the async callback. you can access it then with this.asyncvar
@@ -306,8 +310,63 @@ Hub.prototype.updateParentHub = function() {
     }
 };
 
-Hub.prototype.getParents = function() {
-    parentlist = JSON.parse(localStorage.getItem("parents"));
+Hub.prototype.updateMap = function() {
+    var treedata = {
+        'treedata': [],
+        state: true
+    };
+
+    var mapped = [];
+    var secondary = [];
+    var tertiary = [];
+    var parent = JSON.parse(localStorage.getItem("parents"));
+    parentlist = parent.parents;
+    mapped.push(localStorage.getItem("primaryhubaddress"));
+    //GET ARRAY OF HUBS CONNECTED TO THE PRIMARY
+    for (var i = 0; i < parentlist.length; i++) {
+        if (parentlist[i].hub === localStorage.getItem("primaryhubaddress")) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                secondary.push( { hub: localStorage.getItem("primaryhubaddress"), remote: parentlist[i].address } );
+                mapped.push(parentlist[i].address);
+            }
+        }
+    }
+    //LOOP THROUGH HUBS AND GET ONES CONNECTED TO THE PRIMARY
+    for (var i = 0; i < parentlist.length; i++) {
+        if (secondary[0].remote.indexOf(parentlist[i].address) > -1) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
+                    tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                }
+            }
+        } else if (secondary[1].remote.indexOf(parentlist[i].address) > -1) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
+                    tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                }
+            }
+        }
+    }
+
+    //BUILD JSON FOR MAP
+    var data = "[ { \"name\": \"" + localStorage.getItem("primaryhubaddress") + "\", \"parent\": null, \"children\": [  ";
+
+    for (var i = 0; i < secondary.length; i++) {
+        if (i+1 == secondary.length) {
+            data = data + " { \"name\": \""+ secondary[0].remote + "\", \"parent\": \"" + secondary[0].hub + "\" } ";
+        }  else {
+            data = data + " { \"name\": \""+ secondary[0].remote + "\", \"parent\": \"" + secondary[0].hub + "\" }, ";
+        }
+    }
+    data = data + " ] } ]";
+    treedata.treedata.push( {data: data} );
+    localStorage.setItem('mapdata', treedata);
 };
+
+Hub.prototype.getMap = function(callback) {
+    maplist = localStorage.getItem(mapdata);
+    console.log(maplist);
+    callback(maplist);
+}
 
 

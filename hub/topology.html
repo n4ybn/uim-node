@@ -20,6 +20,7 @@
 
 <script>
     hub.updateParentHub();
+    hub.updateMap();
     var topologytable = $('#topology').DataTable({
         "pageLength": 100,
         "autowidth": true
@@ -33,4 +34,11 @@
         topologytable.draw();
     }
     hub.getHubs(updateTopologyList);
+
+    function updateMapList(list) {
+        maplist = list;
+    }
+
+    hub.getMap(updateMapList);
+
 </script>
