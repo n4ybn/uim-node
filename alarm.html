@@ -18,7 +18,7 @@
 </div>
 
 <script>
-
+    alarm.updateAlarms();
     var alarmClick; // global var - saves the last clicked hub
 
     // attach event listener to the tbody part of the table,
@@ -55,29 +55,29 @@
         "pageLength": 100,
         "autowidth": true
     });
+
     var alarmlist;
 
     function updateAlarmList(list){
-        alarmlist = list;
-
+        alarmlist = list.alarms;
         for (var i = 0; i < alarmlist.length; i++) {
-            alarmtable.row.add( [ alarmlist[i].id[0], alarmlist[i].origin[0], alarmlist[i].robot[0], alarmlist[i].probe[0], alarmlist[i].severity[0], alarmlist[i].message[0],
+            alarmtable.row.add( [ alarmlist[i].alarm.id, alarmlist[i].alarm.origin, alarmlist[i].alarm.robot, alarmlist[i].alarm.probe, alarmlist[i].alarm.severity, alarmlist[i].alarm.message,
                 /* "<span class=\"acceptAlarm\"><i class=\"fa fa-caret-square-o-down fa-2x\" title=\"Accept Alarm\" id=\""+i+"\"></i></span>" ] ); */
-            "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
-            "Alarm Actions" +
-            "<span class=\"caret\"></span>" +
-            "</button>" +
-            "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
-            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"accept\" href=\"#\">Accept</a></li>" +
-            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"ack\" href=\"#\">Acknowledge</a></li>" +
-            "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"assign\" href=\"#\">Assign</a></li>" +
-            "</ul>" +
-            "</div>" ] );
+                "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
+                "Alarm Actions" +
+                "<span class=\"caret\"></span>" +
+                "</button>" +
+                "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
+                "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"accept\" href=\"#\">Accept</a></li>" +
+                "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"ack\" href=\"#\">Acknowledge</a></li>" +
+                "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"assign\" href=\"#\">Assign</a></li>" +
+                "</ul>" +
+                "</div>" ] );
         }
         // that call ensures to redraw the table, so updates are visible immediately after change.
         // it needs to be called every time after adding/removing a row!
-        hubtable.draw();
+        alarmtable.draw();
     }
 
-    alarm.updateAlarms(updateAlarmList);
+    alarm.getAlarms(updateAlarmList);
 </script>

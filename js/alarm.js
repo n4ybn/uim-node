@@ -9,20 +9,30 @@ function Alarm() {
     this.path = 'alarms/';
 }
 
-Alarm.prototype.updateAlarms = function(callback) {
+Alarm.prototype.updateAlarms = function() {
+    var alarms = {
+        'alarms': [],
+        state: true
+    };
+
     jsonClient.get(connection.url+this.path, function(data, response) {
         var d = data['alarm-list']['alarm'];
         alarmlist = d;
-        callback(alarmlist);
+        for (var i = 0; i < alarmlist.length; i++) {
+            alarms.alarms.push( { alarm: alarmlist[i] } );
+            localStorage.setItem('alarms', JSON.stringify(alarms));
+        }
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
 };
 
-Alarm.prototype.getAlarms = function() {
-    return alarmlist;
+Alarm.prototype.getAlarms = function(callback) {
+    alarmlist = JSON.parse(localStorage.getItem("alarms"));
+    callback(alarmlist);
 };
 
+/*
 Alarm.prototype.interactAlarm = function() {
 
     var options = {
@@ -43,10 +53,8 @@ Alarm.prototype.interactAlarm = function() {
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
-
-
 }
-
+*/
 
 
 
