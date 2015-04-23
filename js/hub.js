@@ -197,13 +197,17 @@ Hub.prototype.updateParentHub = function() {
     for (var i = 0; i < hublist.length; i++) {
         var address = hublist[i].address;
 
-        console.log("CURRENT: "+current);
+        // outer scope check, before async
+        console.log("CURRENT: "+address);
         var url = connection.url+"probe"+address+"/hub/callback2/gethubs";
         jsonClient.post(url, args, function(data, response) {
             var d = data.nimPdsTable;
             gethubs = d.nimPds;
             var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "";
-            console.log(current);
+
+            // inner scope check, within async
+            console.log(this.address);
+
             for (var l = 0; l < gethubs.length; l++) {
                 //loop through the nimInt table
                 for (var j = 0; j < gethubs[l].nimInt.length; j++) {
@@ -253,13 +257,14 @@ Hub.prototype.updateParentHub = function() {
                             break;
                     }
                 }
-                console.log("Polled hub: "+address+" Callback address: "+addr+" Type: "+type+" Proximity: "+proximity);
+                console.log("Polled hub: "+this.address+" Callback address: "+addr+" Type: "+type+" Proximity: "+proximity);
             }
-        }).on('error',function(err){
+        // .bind( {outerscopevar: asyncvar} ) will bind the outer scope variable to the async callback. you can access it then with this.asyncvar
+        }.bind( {address: address} )).on('error',function(err){
             console.log('something went wrong on the request', err.request.options);
         });
     }
-}
+};
 
 Hub.prototype.getParents = function() {
     parentlist = JSON.parse(localStorage.getItem("parents"));
