@@ -332,7 +332,7 @@ Hub.prototype.updateMap = function() {
         }
     }
     //LOOP THROUGH HUBS AND GET ONES CONNECTED TO THE PRIMARY
-    for (var i = 0; i < parentlist.length; i++) {
+    for (i = 0; i < parentlist.length; i++) {
         if (secondary[0].remote.indexOf(parentlist[i].address) > -1) {
             if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
                 if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
@@ -351,7 +351,7 @@ Hub.prototype.updateMap = function() {
     //BUILD JSON FOR MAP
     var data = "[ { \"name\": \"" + localStorage.getItem("primaryhubaddress") + "\", \"parent\": null, \"children\": [  ";
 
-    for (var i = 0; i < secondary.length; i++) {
+    for (i = 0; i < secondary.length; i++) {
         if (i+1 == secondary.length) {
             data = data + " { \"name\": \""+ secondary[0].remote + "\", \"parent\": \"" + secondary[0].hub + "\" } ";
         }  else {
@@ -361,11 +361,11 @@ Hub.prototype.updateMap = function() {
     data = data + " ] } ]";
     treedata.treedata.push( {data: data} );
     localStorage.setItem('mapdata', treedata);
+    localStorage.setItem('data', data);
 };
 
 Hub.prototype.getMap = function(callback) {
-    maplist = localStorage.getItem(mapdata);
-    console.log(maplist);
+    maplist = localStorage.getItem('mapdata');
     callback(maplist);
 }
 
