@@ -337,12 +337,14 @@ Hub.prototype.updateMap = function() {
             if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
                 if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
                     tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                    console.log(parentlist[i].address + " " + parentlist[i].remote);
                 }
             }
         } else if (secondary[1].remote.indexOf(parentlist[i].address) > -1) {
             if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
                 if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
                     tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                    console.log(parentlist[i].address + " " + parentlist[i].remote);
                 }
             }
         }

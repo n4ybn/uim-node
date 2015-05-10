@@ -19,11 +19,13 @@
 
 <script>
     alarm.updateAlarms();
-    var alarmClick; // global var - saves the last clicked hub
+
+    var alarmClick;
 
     // attach event listener to the tbody part of the table,
     // now we listen for general clicks on the table
     // and filter those which are clicked on an <i> element
+
     $('#alarms tbody').bind('click', function(e){
         var target = e.target,
                 $target = $(target);
@@ -31,17 +33,17 @@
         // filter for an <i> element ( nodeName === "I" )
         // filter also that only an element which has a parent with the class 'restartHub' gets triggered
         if(target.nodeName === "A" && $target.attr("class") == "alarm") {
-            alarmClicked($target.attr("id"), $target.attr("title"));
+            alarmClicked($target.attr("id"), $target.attr("title"), $(this).find("td:first").html());
         }
     });
 
-    function alarmClicked(alarmId, title) {
+    function alarmClicked(alarmId, title, nimid) {
         switch (title) {
             case "accept":
-                alert("Accepting Alarm with id:"+alarmId);
+                alert("Accepting Alarm with id:"+nimid);
                 break;
             case "ack":
-                alert("Acknowledging Alarm with id:"+alarmId);
+                alarm.interactAlarm(nimid, title);
                 break;
             case "assign":
                 alert("Assigning Alarm with id:"+alarmId);
