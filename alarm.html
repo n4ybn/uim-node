@@ -18,6 +18,7 @@
 </div>
 
 <script>
+
     alarm.updateAlarms();
 
     var alarmClick;
@@ -49,8 +50,6 @@
                 alert("Assigning Alarm with id:"+alarmId);
                 break;
         }
-
-
     }
 
     var alarmtable = $('#alarms').DataTable( {
@@ -60,8 +59,8 @@
 
     var alarmlist;
 
-    function updateAlarmList(list){
-        alarmlist = list.alarms;
+    function updateAlarmList(alarmlist){
+        console.log(alarmlist);
         for (var i = 0; i < alarmlist.length; i++) {
             alarmtable.row.add( [ alarmlist[i].alarm.id, alarmlist[i].alarm.origin, alarmlist[i].alarm.robot, alarmlist[i].alarm.probe, alarmlist[i].alarm.severity, alarmlist[i].alarm.message,
                 /* "<span class=\"acceptAlarm\"><i class=\"fa fa-caret-square-o-down fa-2x\" title=\"Accept Alarm\" id=\""+i+"\"></i></span>" ] ); */
@@ -80,6 +79,5 @@
         // it needs to be called every time after adding/removing a row!
         alarmtable.draw();
     }
-
     alarm.getAlarms(updateAlarmList);
 </script>

@@ -3,24 +3,21 @@
  */
 var Client = require('node-rest-client').Client;
 
-var alarmlist;
+var alarms = {
+    "alarms" : []
+}
 
 function Alarm() {
     this.path = 'alarms/';
 }
 
 Alarm.prototype.updateAlarms = function() {
-    var alarms = {
-        'alarms': [],
-        state: true
-    };
 
     jsonClient.get(connection.url+this.path, function(data, response) {
         var d = data['alarm-list']['alarm'];
-        alarmlist = d;
-        for (var i = 0; i < alarmlist.length; i++) {
-            alarms.alarms.push( { alarm: alarmlist[i] } );
-            localStorage.setItem('alarms', JSON.stringify(alarms));
+        var al = d;
+        for (var i = 0; i < al.length; i++) {
+            alarms.alarms.push( { alarm: al[i] } );
         }
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
@@ -28,8 +25,7 @@ Alarm.prototype.updateAlarms = function() {
 };
 
 Alarm.prototype.getAlarms = function(callback) {
-    alarmlist = JSON.parse(localStorage.getItem("alarms"));
-    callback(alarmlist);
+    callback(alarms);
 };
 
 
