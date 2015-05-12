@@ -102,9 +102,10 @@ Hub.prototype.updateSubscribers = function() {
         args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
 
         jsonClient.post(connection.url+"probe"+addr+"/hub/callback2/list_subscribers", args, function(data, response) {
+            console.log(data)
             var d = data.nimPdsTable;
             subscriberlist = d[1].nimPds;
-            var name ="", id ="", type ="", connected ="", subject ="", bulksize ="", from ="", address ="", remote_queue ="";
+            var name ="", id ="", type ="", connected ="", subject ="", bulksize ="", from ="", address ="", remote_queue ="", npds = "";
             for (var i = 0; i < subscriberlist.length; i++) {
                 //loop through the nimInt table
                 for (var j = 0; j < subscriberlist[i].nimInt.length; j++) {
@@ -112,6 +113,8 @@ Hub.prototype.updateSubscribers = function() {
                     var value = subscriberlist[i].nimInt[j]['$']
                     if (key === "bulk_size") {
                         bulksize = value;
+                    } else if (key === "npds") {
+                        npds = value;
                     }
 
                 };
@@ -147,7 +150,7 @@ Hub.prototype.updateSubscribers = function() {
                             break;
                     };
                 };
-                subscribers.subscribers.push({ address: addr, name: name, subject: subject, type: type, connected: connected, from: from, bulksize: bulksize });
+                subscribers.subscribers.push({ address: addr, name: name, subject: subject, type: type, connected: connected, from: from, bulksize: bulksize, npds: npds });
 
             };
             localStorage.setItem('subscribers', JSON.stringify(subscribers));
@@ -215,20 +218,6 @@ Hub.prototype.getThroughput = function(callback) {
     callback(throughputlist);
 
 };
-
-//TO DO
-/*
- Hub.prototype.updateTunnels = function() {
-    args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
-    jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback/tunnel_get_info", args, function(data, response) {
-        console.log(data);
-    }).on('error',function(err){
-    console.log('something went wrong on the request', err.request.options);
- });
-
- }
-
- */
 
 Hub.prototype.updateParentHub = function() {
     var parents = {
