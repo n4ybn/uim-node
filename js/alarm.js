@@ -3,9 +3,7 @@
  */
 var Client = require('node-rest-client').Client;
 
-var alarms = {
-    "alarms" : []
-}
+
 
 function Alarm() {
     this.path = 'alarms/';
