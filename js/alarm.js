@@ -11,14 +11,15 @@ function Alarm() {
     this.path = 'alarms/';
 }
 
-Alarm.prototype.updateAlarms = function() {
-
+Alarm.prototype.updateAlarms = function(callback) {
+    alarms.alarms = [];
     jsonClient.get(connection.url+this.path, function(data, response) {
         var d = data['alarm-list']['alarm'];
         var al = d;
         for (var i = 0; i < al.length; i++) {
             alarms.alarms.push( { alarm: al[i] } );
         }
+        callback(alarms.alarms);
     }).on('error',function(err){
         console.log('something went wrong on the request', err.request.options);
     });
