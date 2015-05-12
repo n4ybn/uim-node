@@ -7,7 +7,7 @@
         <div class="table-responsive">
             <table id="alarms" class="table table-th-block table-dark dataTable">
                 <thead>
-                <tr><th>Nimid</th><th>Origin</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th><th>Actions</th></tr>
+                <tr><th>Nimid</th><th>Time Received</th><th>Origin</th><th>Robot</th><th>Probe</th><th>Severity</th><th>Message</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
 
@@ -18,12 +18,15 @@
 </div>
 
 <script>
-    alarm.updateAlarms();
-    var alarmClick; // global var - saves the last clicked hub
+
+    alarm.updateAlarms(updateAlarmList);
+
+    var alarmClick;
 
     // attach event listener to the tbody part of the table,
     // now we listen for general clicks on the table
     // and filter those which are clicked on an <i> element
+
     $('#alarms tbody').bind('click', function(e){
         var target = e.target,
                 $target = $(target);
@@ -31,24 +34,22 @@
         // filter for an <i> element ( nodeName === "I" )
         // filter also that only an element which has a parent with the class 'restartHub' gets triggered
         if(target.nodeName === "A" && $target.attr("class") == "alarm") {
-            alarmClicked($target.attr("id"), $target.attr("title"));
+            alarmClicked($target.attr("id"), $target.attr("title"), $(this).find("td:first").html());
         }
     });
 
-    function alarmClicked(alarmId, title) {
+    function alarmClicked(alarmId, title, nimid) {
         switch (title) {
             case "accept":
-                alert("Accepting Alarm with id:"+alarmId);
+                alarm.interactAlarm(nimid, title);
                 break;
             case "ack":
-                alert("Acknowledging Alarm with id:"+alarmId);
+                alarm.interactAlarm(nimid, title);
                 break;
             case "assign":
                 alert("Assigning Alarm with id:"+alarmId);
                 break;
         }
-
-
     }
 
     var alarmtable = $('#alarms').DataTable( {
@@ -58,11 +59,9 @@
 
     var alarmlist;
 
-    function updateAlarmList(list){
-        alarmlist = list.alarms;
+    function updateAlarmList(alarmlist){
         for (var i = 0; i < alarmlist.length; i++) {
-            alarmtable.row.add( [ alarmlist[i].alarm.id, alarmlist[i].alarm.origin, alarmlist[i].alarm.robot, alarmlist[i].alarm.probe, alarmlist[i].alarm.severity, alarmlist[i].alarm.message,
-                /* "<span class=\"acceptAlarm\"><i class=\"fa fa-caret-square-o-down fa-2x\" title=\"Accept Alarm\" id=\""+i+"\"></i></span>" ] ); */
+            alarmtable.row.add( [ alarmlist[i].alarm.id, alarmlist[i].alarm.timeReceived,alarmlist[i].alarm.origin, alarmlist[i].alarm.robot, alarmlist[i].alarm.probe, alarmlist[i].alarm.severity, alarmlist[i].alarm.message,
                 "<div class=\"dropdown\"> <button class=\"btn btn-default dropdown-toggle\" type=\"button\" id=\"dropdownMenu1\" data-toggle=\"dropdown\" aria-expanded=\"true\"> " +
                 "Alarm Actions" +
                 "<span class=\"caret\"></span>" +
@@ -70,7 +69,7 @@
                 "<ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdownMenu1\">" +
                 "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"accept\" href=\"#\">Accept</a></li>" +
                 "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"ack\" href=\"#\">Acknowledge</a></li>" +
-                "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"assign\" href=\"#\">Assign</a></li>" +
+               // "<li role=\"presentation\"><a class=\"alarm\" role=\"menuitem\" tabindex=\"-1\" id=\""+i+"\" title=\"assign\" href=\"#\">Assign</a></li>" +
                 "</ul>" +
                 "</div>" ] );
         }
@@ -79,5 +78,5 @@
         alarmtable.draw();
     }
 
-    alarm.getAlarms(updateAlarmList);
+    var timer = setInterval(function() {alarm.updateAlarms(updateAlarmList)}, 60000);
 </script>

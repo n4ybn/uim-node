@@ -6,6 +6,7 @@ var hublist;
 var subscriberlist;
 var parentlist;
 var throughputlist;
+var maplist;
 
 function Hub() {
     this.path = 'hubs/';
@@ -101,9 +102,10 @@ Hub.prototype.updateSubscribers = function() {
         args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
 
         jsonClient.post(connection.url+"probe"+addr+"/hub/callback2/list_subscribers", args, function(data, response) {
+            console.log(data)
             var d = data.nimPdsTable;
             subscriberlist = d[1].nimPds;
-            var name ="", id ="", type ="", connected ="", subject ="", bulksize ="", from ="", address ="", remote_queue ="";
+            var name ="", id ="", type ="", connected ="", subject ="", bulksize ="", from ="", address ="", remote_queue ="", npds = "";
             for (var i = 0; i < subscriberlist.length; i++) {
                 //loop through the nimInt table
                 for (var j = 0; j < subscriberlist[i].nimInt.length; j++) {
@@ -111,6 +113,8 @@ Hub.prototype.updateSubscribers = function() {
                     var value = subscriberlist[i].nimInt[j]['$']
                     if (key === "bulk_size") {
                         bulksize = value;
+                    } else if (key === "npds") {
+                        npds = value;
                     }
 
                 };
@@ -146,7 +150,7 @@ Hub.prototype.updateSubscribers = function() {
                             break;
                     };
                 };
-                subscribers.subscribers.push({ address: addr, name: name, subject: subject, type: type, connected: connected, from: from, bulksize: bulksize });
+                subscribers.subscribers.push({ address: addr, name: name, subject: subject, type: type, connected: connected, from: from, bulksize: bulksize, npds: npds });
 
             };
             localStorage.setItem('subscribers', JSON.stringify(subscribers));
@@ -215,20 +219,6 @@ Hub.prototype.getThroughput = function(callback) {
 
 };
 
-//TO DO
-/*
- Hub.prototype.updateTunnels = function() {
-    args = { headers: {"Content-Type":"application/json", "Accept":"application/json"}, data: {"callbackrequest": {"timeout":"5"}} };
-    jsonClient.post(connection.url+"probe"+connection.address+"/hub/callback/tunnel_get_info", args, function(data, response) {
-        console.log(data);
-    }).on('error',function(err){
-    console.log('something went wrong on the request', err.request.options);
- });
-
- }
-
- */
-
 Hub.prototype.updateParentHub = function() {
     var parents = {
         'parents': [],
@@ -246,7 +236,7 @@ Hub.prototype.updateParentHub = function() {
         jsonClient.post(url, args, function(data, response) {
             var d = data.nimPdsTable;
             gethubs = d.nimPds;
-            var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "";
+            var port = 0, stat = 0, type = 0, proximity = 0, addr = "", hip = "", robotname = "", src = "", name = "", version = "", origin = "", primary =  false;
             for (var l = 0; l < gethubs.length; l++) {
                 //loop through the nimInt table
                 for (var j = 0; j < gethubs[l].nimInt.length; j++) {
@@ -296,7 +286,10 @@ Hub.prototype.updateParentHub = function() {
                             break;
                     }
                 }
-                parents.parents.push( { hub: this.address, address: addr, type: type, proximity: proximity } );
+                if (this.address === localStorage.getItem("primaryhubaddress")) {
+                    primary = true;
+                }
+                parents.parents.push( { hub: this.address, address: addr, type: type, proximity: proximity, source: src, ip: hip, primary: primary } );
             }
             localStorage.setItem('parents', JSON.stringify(parents));
         // .bind( {outerscopevar: asyncvar} ) will bind the outer scope variable to the async callback. you can access it then with this.asyncvar
@@ -306,8 +299,65 @@ Hub.prototype.updateParentHub = function() {
     }
 };
 
-Hub.prototype.getParents = function() {
-    parentlist = JSON.parse(localStorage.getItem("parents"));
+Hub.prototype.updateMap = function() {
+    var treedata = {
+        'treedata': [],
+        state: true
+    };
+
+    var mapped = [];
+    var secondary = [];
+    var tertiary = [];
+    var parent = JSON.parse(localStorage.getItem("parents"));
+    parentlist = parent.parents;
+    mapped.push(localStorage.getItem("primaryhubaddress"));
+    //GET ARRAY OF HUBS CONNECTED TO THE PRIMARY
+    for (var i = 0; i < parentlist.length; i++) {
+        if (parentlist[i].hub === localStorage.getItem("primaryhubaddress")) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                secondary.push( { hub: localStorage.getItem("primaryhubaddress"), remote: parentlist[i].address } );
+                mapped.push(parentlist[i].address);
+            }
+        }
+    }
+    //LOOP THROUGH HUBS AND GET ONES CONNECTED TO THE PRIMARY
+    for (i = 0; i < parentlist.length; i++) {
+        if (secondary[0].remote.indexOf(parentlist[i].address) > -1) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
+                    tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                    console.log(parentlist[i].address + " " + parentlist[i].remote);
+                }
+            }
+        } else if (secondary[1].remote.indexOf(parentlist[i].address) > -1) {
+            if (parentlist[i].type != 1 && parentlist[i].proximity == 0) {
+                if (parentlist[i].hub != localStorage.getItem("primaryhubaddress")) {
+                    tertiary.push( { hub: parentlist[i].address, remote: parentlist[i].hub});
+                    console.log(parentlist[i].address + " " + parentlist[i].remote);
+                }
+            }
+        }
+    }
+
+    //BUILD JSON FOR MAP
+    var data = "[ { \"name\": \"" + localStorage.getItem("primaryhubaddress") + "\", \"parent\": null, \"children\": [  ";
+
+    for (i = 0; i < secondary.length; i++) {
+        if (i+1 == secondary.length) {
+            data = data + " { \"name\": \""+ secondary[0].remote + "\", \"parent\": \"" + secondary[0].hub + "\" } ";
+        }  else {
+            data = data + " { \"name\": \""+ secondary[0].remote + "\", \"parent\": \"" + secondary[0].hub + "\" }, ";
+        }
+    }
+    data = data + " ] } ]";
+    treedata.treedata.push( {data: data} );
+    localStorage.setItem('mapdata', treedata);
+    localStorage.setItem('data', data);
 };
+
+Hub.prototype.getMap = function(callback) {
+    maplist = localStorage.getItem('mapdata');
+    callback(maplist);
+}
 
 

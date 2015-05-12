@@ -8,7 +8,7 @@
         <div class="table-responsive">
             <table id="subscribers" class="table table-th-block table-dark dataTable">
                 <thead>
-                <tr><th style="width: 120px;">Hub</th><th>Queue</th><th>Subject</th><th>Type</th><th>Connected</th><th>From</th><th>Bulk Size</th></tr>
+                <tr><th style="width: 120px;">Hub</th><th>Queue</th><th>Subject</th><th>Messages in Queue</th><th>Type</th><th>Connected</th><th>From</th><th>Bulk Size</th></tr>
                 </thead>
                 <tbody>
 
@@ -31,7 +31,7 @@
     function updateSubscribersList(list) {
         subscriberlist = list.subscribers;
         for (var i = 0; i < subscriberlist.length; i++) {
-            subscriberstable.row.add( [ subscriberlist[i].address,subscriberlist[i].name,subscriberlist[i].subject,subscriberlist[i].type,subscriberlist[i].connected,subscriberlist[i].from,subscriberlist[i].bulksize ] );
+            subscriberstable.row.add( [ subscriberlist[i].address,subscriberlist[i].name,subscriberlist[i].subject,subscriberlist[i].npds,subscriberlist[i].type,subscriberlist[i].connected,subscriberlist[i].from,subscriberlist[i].bulksize ] );
         }
 
 
